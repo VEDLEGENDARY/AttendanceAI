@@ -4,40 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Camera Feed with Snapshot</title>
-    <style>
-        body, html {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            text-align: center;
-            position: relative;
-        }
-        #video {
-            width: 500px;
-            height: 500px;
-            object-fit: cover;
-            border-radius: 10px;
-            border: 2px solid #333;
-        }
-        #snapshot-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: rgba(255, 255, 255, 0.8);
-            border: none;
-            cursor: pointer;
-            padding: 10px;
-            border-radius: 50%;
-            font-size: 24px;
-        }
-    </style>
+    <link href="styles.css" rel="stylesheet"></link>
 </head>
 <body>
+    <div class = "header">
+        <h1>Welcome To AttendanceAI</h1>
+    </div>
     <div class="container">
         <video id="video" autoplay></video>
         <button id="snapshot-btn">📸</button>

@@ -1,0 +1,38 @@
+body, html {
+    display: inline-block;
+    justify-content: left;
+    align-items: center;
+    padding: 1%;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    display: block;
+}
+
+.container {
+    text-align: center;
+    position: relative;
+}
+#video {
+    width: 500px;
+    height: 500px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid #333;
+}
+#snapshot-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 20%;
+    border: 1px solid black;
+    font-size: 24px;
+    cursor: pointer;
+}

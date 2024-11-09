@@ -24,7 +24,7 @@ body, html {
     0 0 / var(--bg-size) 100%;
   color: transparent;
   background-clip: text;
-}
+}   
 
 @media (prefers-reduced-motion: no-preference) {
   .title-text {
@@ -51,18 +51,27 @@ body, html {
     height: 500px;
     object-fit: cover;
     border-radius: 10px;
-    border: 2px solid #333;
+    box-shadow: 5px 5px 10px;
 }
 #snapshot-btn {
     position: absolute;
     top: 10px;
     right: 10px;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.685);
     border: none;
     cursor: pointer;
-    padding: 10px;
+    padding: 3%;
     border-radius: 20%;
-    border: 1px solid black;
+    box-shadow: 1px 5px 5px rgb(0, 0, 0);
     font-size: 24px;
     cursor: pointer;
+    transition: transform 0.5s ease;
 }
+
+#snapshot-btn:hover {
+    background-color: rgb(235, 235, 235);  /* Solid white background on hover */
+    box-shadow: 2px 8px 10px rgba(0, 0, 0, 0.5); /* Increased shadow on hover */
+    transform: scale(1.09);
+    transition: all 0.3s ease  /* Slightly enlarge the button on hover */
+}
+

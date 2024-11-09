@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Camera Feed with Snapshot</title>
+    <style>
+        body, html {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            text-align: center;
+            position: relative;
+        }
+        #video {
+            width: 500px;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid #333;
+        }
+        #snapshot-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <video id="video" autoplay></video>
+        <button id="snapshot-btn">📸</button>
+    </div>
+
+    <script>
+        // Initialize the camera feed
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: { width: 500, height: 500 } })
+            .then(stream => {
+                const video = document.getElementById('video');
+                video.srcObject = stream;
+            })
+            .catch(error => {
+                console.error("Error accessing the camera:", error);
+                alert("Unable to access the camera. Please check permissions.");
+            });
+        } else {
+            alert("getUserMedia is not supported in this browser.");
+        }
+
+        // Capture a snapshot and send it to the server for saving
+        document.getElementById('snapshot-btn').addEventListener('click', () => {
+            const video = document.getElementById('video');
+            const canvas = document.createElement('canvas');
+            canvas.width = 500;
+            canvas.height = 500;
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, 500, 500);
+
+            // Convert canvas to data URL
+            const dataUrl = canvas.toDataURL('image/png');
+
+            // Send snapshot to the server for saving
+            fetch('/save-snapshot', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image: dataUrl })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Snapshot saved successfully!');
+                } else {
+                    alert('Failed to save snapshot.');
+                }
+            })
+            .catch(error => console.error('Error saving snapshot:', error));
+        });
+    </script>
+</body>
+</html>

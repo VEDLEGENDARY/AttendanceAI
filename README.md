@@ -6,6 +6,8 @@ Design a product or service that uses AI to help someone or address a need in th
 </p>
 <h2>Atendance AI</h2>
 <h3>Links</h3>
-<a href="https://docs.google.com/document/d/1Hf-wZ1UnPxEkOTYmk16WvssJ8hw8QEQs_PAgXXkORuw/edit?tab=t.0#heading=h.f0lhi7cm48fh" target="_blank">Click here to view the document</a>
+<a href="https://docs.google.com/document/d/1Hf-wZ1UnPxEkOTYmk16WvssJ8hw8QEQs_PAgXXkORuw/edit?tab=t.0#heading=h.f0lhi7cm48fh" target="_blank">Click here to view the Development #1 - Entrepreneurship</a>
 <br>
-<a href="https://docs.google.com/presentation/d/1p8pUw5QJDYvFM2E_cnXSQdlKjvD5-LiyU8BN5rg-LrY/edit" target="_blank">Click here to view the presentation</a>
+<a href="https://docs.google.com/document/d/17vy8ihEKFmGJUStANtkew-H_Og4kvuByM8LTcbAbAd4/edit?tab=t.0#heading=h.f0lhi7cm48fh" target="_blank">Click here to view the Development #2 - Design Thinking </a>
+<br>
+<a href="https://docs.google.com/presentation/d/1p8pUw5QJDYvFM2E_cnXSQdlKjvD5-LiyU8BN5rg-LrY/edit" target="_blank">Click here to view the AttendanceAI Capstone Project</a>

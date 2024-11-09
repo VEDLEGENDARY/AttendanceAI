@@ -10,7 +10,7 @@ Design a product or service that uses AI to help someone or address a need in th
 
 - Ramy H
 - Ved P
-- Damil A
+- Damir A
 - Sanjay Prabakar
 - Chetan C
 </p>

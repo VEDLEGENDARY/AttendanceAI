@@ -3,10 +3,40 @@ body, html {
     justify-content: left;
     align-items: center;
     padding: 1%;
+    background-color: rgb(215, 215, 255);
     height: 100vh;
     margin: 0;
     font-family: Arial, sans-serif;
 }
+
+.title-text {
+--bg-size: 200%;
+  --color-one: hsl(197, 100%, 50%);
+  --color-two: hsl(251, 100%, 19%);
+  font-family: sans-serif;
+  font-size: 3rem;
+  background: linear-gradient(
+      90deg,
+      var(--color-one),
+      var(--color-two),
+      var(--color-one)
+    )
+    0 0 / var(--bg-size) 100%;
+  color: transparent;
+  background-clip: text;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .title-text {
+    animation: move-bg 4s linear infinite;
+  }
+  @keyframes move-bg {
+    to {
+      background-position: var(--bg-size) 0;
+    }
+  }
+}
+
 
 .header {
     display: block;

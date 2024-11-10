@@ -3,17 +3,20 @@ body, html {
     justify-content: left;
     align-items: center;
     padding: 1%;
-    background-color: rgb(215, 215, 255);
+    background-color: rgb(240, 240, 240);
     height: 100vh;
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif    
+}
+
+.header > * {
+  margin: 0;
 }
 
 .title-text {
 --bg-size: 200%;
   --color-one: hsl(197, 100%, 50%);
   --color-two: hsl(251, 100%, 19%);
-  font-family: sans-serif;
   font-size: 3rem;
   background: linear-gradient(
       90deg,
@@ -46,16 +49,17 @@ body, html {
     text-align: center;
     position: relative;
 }
-#video {
+video {
     width: 500px;
     height: 500px;
+    margin-top: 3%;
     object-fit: cover;
     border-radius: 10px;
-    box-shadow: 5px 5px 10px;
+    box-shadow: darkblue 0px 0px 10px 4px, cyan 0px 0px 10px 3.5px;
 }
 #snapshot-btn {
     position: absolute;
-    top: 10px;
+    top: 20px;
     right: 10px;
     background-color: rgba(255, 255, 255, 0.685);
     border: none;

@@ -9,11 +9,27 @@
 <body>
     <div class="header">
         <h1 class="title-text">AttendanceAI</h1>
+        <div class="header-links">
+            <i class="fa-solid fa-house"></i>
+            <a href="#">Login</a>
+            <i class="fa-solid fa-user"></i>
+            <a href="#">Sign Up</a>
+            <i class="fa-solid fa-square-plus"></i>
+            <a href="#">Add a Class</a>
+        </div>
     </div>
 
-    <div class="container">
-        <video id="video" autoplay></video>
-        <button id="snapshot-btn"> <i class="fa-solid fa-camera"></i></button>
+    <div class="main-container">
+        <div class="first-half">
+            <div class="container">
+                <video id="video" autoplay></video>
+                <button id="snapshot-btn"> <i class="fa-solid fa-camera"></i></button>
+            </div>
+        </div>
+
+        <div class="second-half">
+            <p style="color: white;"> More content will be here soon.</p>
+        </div>
     </div>
 
     <!-- Provides support for icons -->
@@ -34,7 +50,7 @@
         } else {
             alert("getUserMedia is not supported in this browser.");
         }
-    
+
         // Handle snapshot button click
         document.getElementById('snapshot-btn').addEventListener('click', () => {
             const video = document.getElementById('video');
@@ -43,10 +59,10 @@
             canvas.height = video.videoHeight; // Get video height
             const context = canvas.getContext('2d');
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    
+
             // Convert canvas to data URL
             const dataUrl = canvas.toDataURL('image/png');
-    
+
             // Create a temporary link element to trigger the download
             const link = document.createElement('a');
             link.href = dataUrl;

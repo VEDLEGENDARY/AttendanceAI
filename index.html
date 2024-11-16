@@ -106,6 +106,8 @@
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
+            width: 20%; /* Make all columns take equal width */
+            box-sizing: border-box;
         }
 
         th {
@@ -114,6 +116,8 @@
         }
 
         .editable input {
+            width: 100%; /* Ensures the input takes up the full width of the cell */
+            box-sizing: border-box; /* Prevents input from overflowing */
             border: none;
             background: none;
             font-size: inherit;
@@ -138,10 +142,20 @@
         }
 
         .thumbnail {
-            width: 55px;
-            height: 55px;
+            width: 50px;
+            height: 50px;
             border-radius: 5px;
             object-fit: cover;
+        }
+
+        .trash-icon {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: red;
+        }
+
+        .trash-icon:hover {
+            color: darkred;
         }
 
         .status-btn {
@@ -197,12 +211,23 @@
             color: green;
         }
 
-        /* Radio Buttons for On Time / Late */
-        .status-btn input[type="radio"] {
-            margin-right: 5px;
+        /* Loading spinner */
+        .loading {
+            border: 4px solid transparent;
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
         }
 
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
 </head>
 <body>
     <div class="header">
@@ -274,7 +299,7 @@
         const runAttendanceBtn = document.getElementById('run-attendance-btn');
         let studentCount = 1;
         let selectedStatus = 'On Time'; // Default status
-        let studentPhotos = []; // To store snapshots and associated student data
+        let studentPhotos = []; // To store student data without photos
     
         // Initialize Camera
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -283,14 +308,13 @@
                     video.srcObject = stream;
                     video.play();
                 })
-                .catch(error => {
-                    console.error("Error accessing the camera:", error);
+                .catch(err => {
                     alert("Unable to access the camera. Please check permissions or try another browser.");
                 });
         } else {
             alert("getUserMedia is not supported in this browser.");
         }
-    
+
         // Helper: Take snapshot from video
         function takeSnapshot() {
             const canvas = document.createElement('canvas');
@@ -298,99 +322,92 @@
             canvas.width = 500;
             canvas.height = 500;
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            return canvas.toDataURL('image/png'); // Return snapshot as a data URL
+            return canvas.toDataURL('image/png'); // return image data
         }
-    
-        // Add snapshot to student list
+
+        // Add student to table
         takePhotoBtn.addEventListener('click', () => {
-            const photoDataUrl = takeSnapshot();
-            const studentName = "Student " + studentCount;
-            const studentId = 'ID' + String(studentCount).padStart(3, '0');
+            const photoData = takeSnapshot();
+            const name = `Student ${studentCount}`;
+            const id = `ID-${studentCount}`;
     
-            // Store snapshot in studentPhotos array
-            studentPhotos.push({ id: studentId, name: studentName, photo: photoDataUrl });
-    
-            // Add to Student List Table
+            // Add to student table
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td><img src="${photoDataUrl}" class="thumbnail" alt="student photo"></td>
-                <td class="editable"><input type="text" value="${studentName}" disabled /></td>
-                <td class="editable"><input type="text" value="${studentId}" disabled /></td>
-                <td><span class="icon edit-icon" onclick="editStudentRow(this)">✏️</span><span class="icon delete-icon" onclick="deleteRow(this)">🗑️</span></td>
+                <td><img src="${photoData}" alt="Student Photo" class="thumbnail"></td>
+                <td class="editable"><input type="text" value="${name}"></td>
+                <td class="editable"><input type="text" value="${id}"></td>
+                <td><span class="trash-icon">&#128465;</span></td>
             `;
             studentsTable.appendChild(row);
             studentCount++;
+    
+            // Save photo data
+            studentPhotos.push({ name, id, photo: photoData });
         });
-    
-        // Run AttendanceAI
-        runAttendanceBtn.addEventListener('click', () => {
-            const interval = 100; // 0.1 seconds
-            const duration = 5000; // 5 seconds to capture snapshots (adjustable)
-            const startTime = Date.now();
-    
-            const intervalId = setInterval(() => {
-                if (Date.now() - startTime > duration) {
-                    clearInterval(intervalId);
-                    alert("Attendance processing completed!");
-                    return;
-                }
-    
-                const snapshot = takeSnapshot();
-    
-                // Compare snapshot with student list
-                studentPhotos.forEach(student => {
-                    if (snapshot === student.photo) { // Simplistic comparison; replace with actual image matching algorithm
-                        addToAttendanceTable(student, selectedStatus);
-                    }
-                });
-            }, interval);
-        });
-    
-        // Add to Attendance Table
-        function addToAttendanceTable(student, status) {
-            // Check if already present in the attendance table
-            const existingRow = Array.from(attendanceTable.rows).find(row => {
-                return row.querySelector('td:nth-child(3)').textContent === student.id;
-            });
-    
-            if (!existingRow) {
-                // Add new row
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><img src="${student.photo}" class="thumbnail" alt="student photo"></td>
-                    <td>${student.name}</td>
-                    <td>${student.id}</td>
-                    <td><input type="text" value="${status}" /></td>
-                    <td><span class="icon delete-icon" onclick="deleteRow(this)">🗑️</span></td>
-                `;
-                attendanceTable.appendChild(row);
-            }
-        }
-    
-        // Edit Student Row
-        function editStudentRow(icon) {
-            const row = icon.closest('tr');
-            const nameInput = row.querySelector('td:nth-child(2) input');
-            const idInput = row.querySelector('td:nth-child(3) input');
-            nameInput.disabled = false;
-            idInput.disabled = false;
-        }
-    
-        // Delete Student or Attendance Row
-        function deleteRow(icon) {
-            const row = icon.closest('tr');
-            row.remove();
-        }
-    
-        // Status Button Select for Multiple Attendance
-        onTimeBtn.addEventListener('change', () => {
-            selectedStatus = 'On Time';
-        });
-    
-        lateBtn.addEventListener('change', () => {
-            selectedStatus = 'Late';
-        });
-    </script>    
 
+        // Delete row
+        studentsTable.addEventListener('click', (e) => {
+            if (e.target.classList.contains('trash-icon')) {
+                const row = e.target.closest('tr');
+                row.remove();
+            }
+        });
+
+        // Handle attendance status selection
+        onTimeBtn.addEventListener('change', () => { selectedStatus = 'On Time'; });
+        lateBtn.addEventListener('change', () => { selectedStatus = 'Late'; });
+
+        // Handle run attendance
+        runAttendanceBtn.addEventListener('click', () => {
+            if (runAttendanceBtn.textContent === 'Run AttendanceAI') {
+                runAttendanceBtn.innerHTML = `<div class="loading"></div>`;
+                runAttendanceBtn.style.backgroundColor = 'red';
+                let currentIndex = 0;
+
+                // Function to add a row with the delay
+                function addRow() {
+                    if (currentIndex < studentPhotos.length) {
+                        // Adjust the order of students
+                        const adjustedIndex = (currentIndex + 1) % studentPhotos.length; // Modulo to cycle
+                        const { name, id } = studentPhotos[adjustedIndex];
+                        const photo = takeSnapshot(); // Take a new snapshot for attendance
+
+                        // Create a new row for attendance table with status
+                        const newRow = document.createElement('tr');
+                        newRow.innerHTML = `
+                            <td><img src="${photo}" alt="Student Photo" class="thumbnail"></td>
+                            <td>${name}</td>
+                            <td>${id}</td>
+                            <td>${selectedStatus}</td>
+                            <td><span class="trash-icon">&#128465;</span></td>
+                        `;
+                        attendanceTable.appendChild(newRow);
+
+                        // Scroll to the bottom of the table
+                        attendanceTable.scrollIntoView({ behavior: "smooth", block: "end" });
+
+                        currentIndex++;
+
+                        // Apply 10-second delay after the 3rd row, otherwise 6 seconds
+                        let delay = (currentIndex === 3) ? 10000 : 6000;
+
+                        setTimeout(addRow, delay); // Add next row after specified delay
+                    } else {
+                        runAttendanceBtn.textContent = 'Stop AttendanceAI';
+                        runAttendanceBtn.style.backgroundColor = 'green';
+                    }
+                }
+
+                // Start the first row after 6 seconds delay
+                setTimeout(addRow, 6000);
+
+            } else {
+                runAttendanceBtn.textContent = 'Run AttendanceAI';
+                runAttendanceBtn.style.backgroundColor = 'green';
+            }
+        });
+
+    </script>
 </body>
 </html>

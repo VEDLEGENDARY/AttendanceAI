@@ -138,8 +138,8 @@
         }
 
         .thumbnail {
-            width: 40px;
-            height: 40px;
+            width: 55px;
+            height: 55px;
             border-radius: 5px;
             object-fit: cover;
         }
@@ -273,8 +273,9 @@
         const lateBtn = document.getElementById('late-btn');
         const runAttendanceBtn = document.getElementById('run-attendance-btn');
         let studentCount = 1;
-        let selectedStatus = 'Absent'; // Default status is 'Absent'
-
+        let selectedStatus = 'On Time'; // Default status
+        let studentPhotos = []; // To store snapshots and associated student data
+    
         // Initialize Camera
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia({ video: { width: 500, height: 500 } })
@@ -289,13 +290,26 @@
         } else {
             alert("getUserMedia is not supported in this browser.");
         }
-
-        // Take Photo and Add to Students List
+    
+        // Helper: Take snapshot from video
+        function takeSnapshot() {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = 500;
+            canvas.height = 500;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            return canvas.toDataURL('image/png'); // Return snapshot as a data URL
+        }
+    
+        // Add snapshot to student list
         takePhotoBtn.addEventListener('click', () => {
+            const photoDataUrl = takeSnapshot();
             const studentName = "Student " + studentCount;
             const studentId = 'ID' + String(studentCount).padStart(3, '0');
-            const photoDataUrl = video.srcObject; // Here you would use an actual method to capture the photo
-
+    
+            // Store snapshot in studentPhotos array
+            studentPhotos.push({ id: studentId, name: studentName, photo: photoDataUrl });
+    
             // Add to Student List Table
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -307,19 +321,52 @@
             studentsTable.appendChild(row);
             studentCount++;
         });
-
+    
         // Run AttendanceAI
         runAttendanceBtn.addEventListener('click', () => {
-            // Simulate AI function to mark attendance (dummy code)
-            const students = Array.from(studentsTable.querySelectorAll('tr'));
-            students.forEach(student => {
-                const statusCell = student.querySelector('.status');
-                const status = selectedStatus;
-                statusCell.textContent = status;
-            });
-            alert("Attendance processed by AI!");
+            const interval = 100; // 0.1 seconds
+            const duration = 5000; // 5 seconds to capture snapshots (adjustable)
+            const startTime = Date.now();
+    
+            const intervalId = setInterval(() => {
+                if (Date.now() - startTime > duration) {
+                    clearInterval(intervalId);
+                    alert("Attendance processing completed!");
+                    return;
+                }
+    
+                const snapshot = takeSnapshot();
+    
+                // Compare snapshot with student list
+                studentPhotos.forEach(student => {
+                    if (snapshot === student.photo) { // Simplistic comparison; replace with actual image matching algorithm
+                        addToAttendanceTable(student, selectedStatus);
+                    }
+                });
+            }, interval);
         });
-
+    
+        // Add to Attendance Table
+        function addToAttendanceTable(student, status) {
+            // Check if already present in the attendance table
+            const existingRow = Array.from(attendanceTable.rows).find(row => {
+                return row.querySelector('td:nth-child(3)').textContent === student.id;
+            });
+    
+            if (!existingRow) {
+                // Add new row
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><img src="${student.photo}" class="thumbnail" alt="student photo"></td>
+                    <td>${student.name}</td>
+                    <td>${student.id}</td>
+                    <td><input type="text" value="${status}" /></td>
+                    <td><span class="icon delete-icon" onclick="deleteRow(this)">🗑️</span></td>
+                `;
+                attendanceTable.appendChild(row);
+            }
+        }
+    
         // Edit Student Row
         function editStudentRow(icon) {
             const row = icon.closest('tr');
@@ -328,21 +375,22 @@
             nameInput.disabled = false;
             idInput.disabled = false;
         }
-
-        // Delete Student Row
+    
+        // Delete Student or Attendance Row
         function deleteRow(icon) {
             const row = icon.closest('tr');
             row.remove();
         }
-
+    
         // Status Button Select for Multiple Attendance
         onTimeBtn.addEventListener('change', () => {
             selectedStatus = 'On Time';
         });
-
+    
         lateBtn.addEventListener('change', () => {
             selectedStatus = 'Late';
         });
-    </script>
+    </script>    
+
 </body>
 </html>
